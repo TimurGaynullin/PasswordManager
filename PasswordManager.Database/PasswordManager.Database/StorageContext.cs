@@ -5,8 +5,8 @@ namespace PasswordManager.Database
 {
     public class StorageContext : DbContext
     {
-        public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Password> Passwords { get; set; } = null!;
+        public DbSet<User> Users { get; set; }
+        public DbSet<Password> Passwords { get; set; }
         /*
         public DbSet<Group> Groups { get; set; }
         public DbSet<Folder> Folders { get; set; }

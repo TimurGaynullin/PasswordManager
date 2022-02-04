@@ -13,9 +13,7 @@ namespace PasswordManager.Database.Models.Entities
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Email { get; set; }
+        public string Login { get; set; }
         [Required]
         public string MasterPasswordHash { get; set; }
         
