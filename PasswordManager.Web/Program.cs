@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Linq;
+//TODO: Создать авторизацию
+//Шифруем данные хэшем от мастер-пароля и его хэша
+//Расшифровка будет на стороне клиента
+//Когда пользователь хочет поделиться паролем, бэк принимает его в открытом виде, у себя шифрует AESом. Когда логинится пользователь-получатель, перешифруем пароль
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
