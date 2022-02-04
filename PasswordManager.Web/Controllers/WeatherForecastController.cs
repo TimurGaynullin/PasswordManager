@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PasswordManager.Database;
+using PasswordManager.Database.Models.Entities;
 
 namespace PasswordManager.Web.Controllers
 {
@@ -16,10 +18,12 @@ namespace PasswordManager.Web.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly StorageContext _context;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, StorageContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
@@ -32,6 +36,12 @@ namespace PasswordManager.Web.Controllers
                     Summary = Summaries[Random.Shared.Next(Summaries.Length)]
                 })
                 .ToArray();
+        }
+        
+        [HttpGet("db")]
+        public IEnumerable<User> Get1()
+        {
+            return _context.Users.ToList();
         }
     }
 }

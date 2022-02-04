@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,8 +10,8 @@ using Microsoft.OpenApi.Models;
 using PasswordManager.Database;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.SetBasePath(Directory.GetCurrentDirectory());
-builder.AddJsonFile("appsettings.json");
+
+
 var configuration = builder.Configuration;
 // Add services to the container.
 
@@ -23,6 +24,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Документация сервиса в голове у Гайнуллина Тимура"
     });
 });
+
 builder.Services.AddStorageDbContext(options => options.UseSqlServer(configuration["App:DbConnectionString"]));
 
 var app = builder.Build();
@@ -39,7 +41,6 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",
