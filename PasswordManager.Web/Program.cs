@@ -1,20 +1,40 @@
-//TODO: Создать авторизацию
 //Шифруем данные хэшем от мастер-пароля и его хэша
 //Расшифровка будет на стороне клиента
 //Когда пользователь хочет поделиться паролем, бэк принимает его в открытом виде, у себя шифрует AESом. Когда логинится пользователь-получатель, перешифруем пароль
+
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using PasswordManager.Database;
+using PasswordManager.Domain;
+using PasswordManager.Domain.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 var configuration = builder.Configuration;
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyOrigin().AllowCredentials();
+        });
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/api/Account/login");
+    });
+builder.Services.AddAuthorization();
+
+builder.Services.AddTransient<IValidationService, ValidationService>();
+builder.Services.AddTransient<IHasher, Hasher>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -28,6 +48,13 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddStorageDbContext(options => options.UseSqlServer(configuration["App:DbConnectionString"]));
 
 var app = builder.Build();
+app.UseAuthentication();
+app.UseRouting();
+app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -40,7 +67,6 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
 
 app.MapControllerRoute(
     name: "default",

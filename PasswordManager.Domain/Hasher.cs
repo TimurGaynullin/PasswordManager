@@ -1,9 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using PasswordManager.Domain.Abstractions;
 
 namespace PasswordManager.Domain
 {
-    public class Hasher
+    public class Hasher : IHasher
     {
         public string CryptPassword(string password)
         {
@@ -11,9 +12,9 @@ namespace PasswordManager.Domain
             var shaM = new SHA512Managed();
             var result = shaM.ComputeHash(data);
             var sBuilder = new StringBuilder();
-            for (int i = 0; i < result.Length; i++)
+            foreach (var @byte in result)
             {
-                sBuilder.Append(result[i].ToString("x2"));
+                sBuilder.Append(@byte.ToString("x2"));
             }
             password = sBuilder.ToString();
             return password;

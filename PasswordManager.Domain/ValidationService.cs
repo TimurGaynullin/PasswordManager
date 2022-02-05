@@ -8,28 +8,37 @@ namespace PasswordManager.Domain
 {
     public class ValidationService : IValidationService
     {
-        Hasher hasher;
+        IHasher hasher;
         StorageContext db;
-        public ValidationService(Hasher hasher, StorageContext db)
+        public ValidationService(IHasher hasher, StorageContext db)
         {
             this.hasher = hasher;
             this.db = db;
         }
         
-        public bool ChangingPassword(User? user, string pass)
+        public bool ChangingPassword(User? user, string oldPassword, string newPassword)
         {
-            /*
             if (user != null)
             {
-                pass = hasher.CryptPassword(pass);
-                var passwords = user.Passwords.OrderByDescending(n => n.CreatingTime.Date).Take(3).ToList();
-                if (passwords.Any(x => x.Value == pass))
+                if (user.MasterPasswordHash != hasher.CryptPassword(oldPassword))
+                {
                     return false;
-                user.Passwords.Add(new Password { Value = pass, CreatingTime = DateTime.Now });
+                }
+
+                var oldPasswordSumHash = hasher.CryptPassword(user.MasterPasswordHash + oldPassword); //старый ключ шифрования
+                var newPasswordHash = hasher.CryptPassword(newPassword);
+                user.MasterPasswordHash = newPasswordHash;
+                var newPasswordSumHash = hasher.CryptPassword(newPasswordHash + newPassword); //новый ключ шифрования
+
+                foreach (var password in user.Passwords)
+                {
+                    //расшифровать старым и зашифровать новым ключом
+                }
+                
                 db.SaveChanges();
                 return true;
             }
-            */
+            
             return false;
         }
 
@@ -37,9 +46,7 @@ namespace PasswordManager.Domain
         {
             if (user != null)
             {
-                var password = user.MasterPasswordHash;
-                pass = hasher.CryptPassword(pass);
-                if (password == pass)
+                if (user.MasterPasswordHash == hasher.CryptPassword(pass))
                 {
                     return true;
                 }
@@ -54,7 +61,7 @@ namespace PasswordManager.Domain
                 db.Users.Add(new User
                 {
                     Login = login,
-                    MasterPasswordHash = password //захэшировать
+                    MasterPasswordHash = hasher.CryptPassword(password)
                 });
                 db.SaveChanges();
                 return true;

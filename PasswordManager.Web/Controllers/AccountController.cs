@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Database;
-using PasswordManager.Database.Models.Entities;
 using PasswordManager.Domain.Abstractions;
 using PasswordManager.Web.Controllers.ViewModels;
 
@@ -27,14 +26,14 @@ namespace PasswordManager.Web.Controllers
         
         [Authorize]
         [HttpPost("password/change")]
-        public async Task<IActionResult> ChangePassword([FromBody]RegisterModel model)
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = await db.Users
-                    .Include(x => x.Passwords)
+                    .Include(x => x.Passwords)//Когда появятся другие секретные данные, подтянуть все и перешифровать
                     .FirstOrDefaultAsync(u => u.Login == model.Login);
-                if (validationService.ChangingPassword(user, model.Password))
+                if (validationService.ChangingPassword(user, model.OldPassword, model.NewPassword))
                 {
                     await Authenticate(model.Login);
                     return Ok();
@@ -66,7 +65,7 @@ namespace PasswordManager.Web.Controllers
                 var user = await db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
                 if (validationService.Registering(user, model.Login, model.Password))
                 {
-                    await Authenticate(model.Login); // аутентификация
+                    await Authenticate(model.Login);
                     return Ok();
                 }
             }
@@ -86,11 +85,13 @@ namespace PasswordManager.Web.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 
-        [HttpGet]
+        [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
         }
+        
+        
     }
 }
