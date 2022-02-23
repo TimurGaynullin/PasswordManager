@@ -3,6 +3,7 @@
 //Расшифровка будет на стороне клиента
 //Когда пользователь хочет поделиться паролем, бэк принимает его в открытом виде, у себя шифрует AESом. Когда логинится пользователь-получатель, перешифруем пароль
 
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using PasswordManager.Database;
 using PasswordManager.Domain;
 using PasswordManager.Domain.Abstractions;
+using PasswordManager.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +37,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<IValidationService, ValidationService>();
+builder.Services.AddTransient<IPasswordService, PasswordService>();
+builder.Services.AddTransient<IAesProtector, AesProtector>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IHasher, Hasher>();
+builder.Services.AddSingleton(new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new ControllersMappingProfile());
+    mc.AddProfile(new MappingProfile());
+}).CreateMapper());
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen(c =>
 {

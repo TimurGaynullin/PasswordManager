@@ -30,12 +30,14 @@ namespace PasswordManager.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var currentUserName = User.Identity?.Name;
+                if (currentUserName == null) return BadRequest();
                 var user = await db.Users
                     .Include(x => x.Passwords)//Когда появятся другие секретные данные, подтянуть все и перешифровать
-                    .FirstOrDefaultAsync(u => u.Login == model.Login);
+                    .FirstOrDefaultAsync(u => u.Login == currentUserName);
                 if (validationService.ChangingPassword(user, model.OldPassword, model.NewPassword))
                 {
-                    await Authenticate(model.Login);
+                    await Authenticate(currentUserName);
                     return Ok();
                 }
             }

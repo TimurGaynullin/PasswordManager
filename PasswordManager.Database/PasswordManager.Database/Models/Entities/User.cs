@@ -12,6 +12,9 @@ namespace PasswordManager.Database.Models.Entities
         }
         [Key]
         public int Id { get; set; }
+        /// <summary>
+        /// Уникальный логин
+        /// </summary>
         [Required]
         public string Login { get; set; }
         [Required]

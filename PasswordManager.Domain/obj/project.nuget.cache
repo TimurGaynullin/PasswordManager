@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "KZe6oSsT9143EyES7hr63/ewpnAc+oQAyhA/USk4ILz19vmnmQVzBgDiqo+KE5Icop3g5ImzrlPylzQ5SIJ/Dw==",
+  "dgSpecHash": "GsiYYg0ZRA/O4Ve5abeC5B/8dehvzilU01B8Q1Xz0KyHAbOhM+7+IDxQj+BZHhUiKPJ31SjuJlqnvyM6p9ss3Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\GaynullinTA\\source\\PasswordManager\\PasswordManager.Domain\\PasswordManager.Domain.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\GaynullinTA\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
+    "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.1\\microsoft.entityframeworkcore.6.0.1.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.1\\microsoft.entityframeworkcore.abstractions.6.0.1.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\6.0.1\\microsoft.entityframeworkcore.analyzers.6.0.1.nupkg.sha512",
