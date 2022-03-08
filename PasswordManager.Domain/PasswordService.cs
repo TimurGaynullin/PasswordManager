@@ -21,42 +21,66 @@ namespace PasswordManager.Domain
             _mapper = mapper;
             _aesProtector = aesProtector;
         }
-        public async Task<PasswordDto> GetPassword(int id, User user)
+        public async Task<PasswordDto> GetPassword(int id, User user, string masterPassword)
         {
             var password = user.Passwords.FirstOrDefault(p => p.Id == id);
             if (password != null)
             {
                 var passwordDto = _mapper.Map<PasswordDto>(password);
-                passwordDto.Value = _aesProtector.FromAes256(passwordDto.Value, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFydHVyIEFraG1ldHNoaW4iLCJpYXQiOjIyMTAyMDE5fQ.TcQ1JqsEVmfRsqCXt6BKYdOey1VfOs4UHzcy0fjPpcU");
+                passwordDto.Value = _aesProtector.FromAes256(passwordDto.Value, $"{masterPassword}{user.MasterPasswordHash}");
                 return passwordDto;
             }
             return null;
         }
 
-        public async Task<List<PasswordDto>> GetPasswords(User user)
+        public async Task<List<PasswordDto>> GetPasswords(User user, string masterPassword)
         {
-            throw new System.NotImplementedException();
+            var passwords = user.Passwords;
+
+            var passwordsDto = passwords.Select(password => _mapper.Map<PasswordDto>(password)).ToList();//
+            foreach (var pwdDto in passwordsDto)
+            {
+                pwdDto.Value = _aesProtector.FromAes256(pwdDto.Value, $"{masterPassword}{user.MasterPasswordHash}");
+            }
+            return passwordsDto;
         }
 
-        public async Task<PasswordDto> CreatePassword(PasswordDto passwordDto, User user)
+        public async Task<PasswordDto> CreatePassword(PasswordDto passwordDto, User user, string masterPassword)
         {
             var password = _mapper.Map<Password>(passwordDto);
-            password.CryptPasswordValue = _aesProtector.ToAes256(password.CryptPasswordValue, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFydHVyIEFraG1ldHNoaW4iLCJpYXQiOjIyMTAyMDE5fQ.TcQ1JqsEVmfRsqCXt6BKYdOey1VfOs4UHzcy0fjPpcU");
+            password.CryptPasswordValue = _aesProtector.ToAes256(password.CryptPasswordValue, $"{masterPassword}{user.MasterPasswordHash}");
             password.UserId = user.Id;
-            var pass = await db.Passwords.AddAsync(password);
-            //db.Entry(pass);
+            await db.Passwords.AddAsync(password);
             await db.SaveChangesAsync();
             return passwordDto;
         }
 
-        public async Task<PasswordDto> UpdatePassword(PasswordDto passwordDto, User user)
+        public async Task<PasswordDto> UpdatePassword(PasswordDto passwordDto, User user, string masterPassword)
         {
-            throw new System.NotImplementedException();
+            var password = _mapper.Map<Password>(passwordDto);
+            var updatedPassword = user.Passwords.FirstOrDefault(p => p.Id == password.Id);
+
+            if (updatedPassword != null)
+            {
+                password.CryptPasswordValue = _aesProtector.ToAes256(passwordDto.Value, $"{masterPassword}{user.MasterPasswordHash}");
+
+                db.Passwords.Update(password);
+                await db.SaveChangesAsync();
+                return passwordDto;
+            }
+            return null;
         }
 
         public async Task<bool> DeletePassword(int id, User user)
         {
-            throw new System.NotImplementedException();
+            var password = user.Passwords.FirstOrDefault(p => p.Id == id);
+            if (password != null)
+            {
+                db.Passwords.Remove(password);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

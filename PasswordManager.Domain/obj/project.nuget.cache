@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "GsiYYg0ZRA/O4Ve5abeC5B/8dehvzilU01B8Q1Xz0KyHAbOhM+7+IDxQj+BZHhUiKPJ31SjuJlqnvyM6p9ss3Q==",
+  "dgSpecHash": "Ii7+sdRz9F44w1kXC4PTmMBUwdkL0Nm4AVPiJ7bP+Y06yB+7eO41HIpw5OKs4ChCUUzBNE8AVP28fRuCU+ST4w==",
   "success": true,
   "projectFilePath": "C:\\Users\\GaynullinTA\\source\\PasswordManager\\PasswordManager.Domain\\PasswordManager.Domain.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\GaynullinTA\\.nuget\\packages\\aesencryptionutil\\1.0.0\\aesencryptionutil.1.0.0.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.1\\microsoft.entityframeworkcore.6.0.1.nupkg.sha512",
@@ -21,5 +22,16 @@
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'aesencryptionutil 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
+      "libraryId": "aesencryptionutil",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
 }

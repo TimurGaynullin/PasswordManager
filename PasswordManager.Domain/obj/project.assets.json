@@ -2,6 +2,15 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "aesencryptionutil/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/EncryptUtil.dll": {}
+        },
+        "runtime": {
+          "lib/EncryptUtil.dll": {}
+        }
+      },
       "AutoMapper/11.0.1": {
         "type": "package",
         "dependencies": {
@@ -239,6 +248,18 @@
     }
   },
   "libraries": {
+    "aesencryptionutil/1.0.0": {
+      "sha512": "yUhSgknt4NT8lnHdVY6IuVn2fLgllX4daZL8KiY0hQHK4ffH7UaE7IELb/igYYiyLr4FW1CTYjH1cclB2eT3IA==",
+      "type": "package",
+      "path": "aesencryptionutil/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "aesencryptionutil.1.0.0.nupkg.sha512",
+        "aesencryptionutil.nuspec",
+        "lib/EncryptUtil.dll"
+      ]
+    },
     "AutoMapper/11.0.1": {
       "sha512": "WIadGC1pIwbnyTubvI577p3F++Bsj9q2Q3OaAc1I0QS+JhupN1xkdrPBhI9bPIeg63zM81tZplUNYkqU1HE5jQ==",
       "type": "package",
@@ -660,7 +681,8 @@
     "net6.0": [
       "AutoMapper >= 11.0.1",
       "PasswordManager.Contracts >= 1.0.0",
-      "PasswordManager.Database >= 1.0.0"
+      "PasswordManager.Database >= 1.0.0",
+      "aesencryptionutil >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -714,6 +736,10 @@
           "AutoMapper": {
             "target": "Package",
             "version": "[11.0.1, )"
+          },
+          "aesencryptionutil": {
+            "target": "Package",
+            "version": "[1.0.0, )"
           }
         },
         "imports": [
@@ -734,5 +760,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'aesencryptionutil 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
+      "libraryId": "aesencryptionutil",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
 }
