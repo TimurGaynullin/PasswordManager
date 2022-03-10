@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PasswordManager.Contracts;
 using PasswordManager.Database;
 using PasswordManager.Domain.Abstractions;
 using PasswordManager.Web.Controllers.ViewModels;
@@ -102,6 +104,23 @@ namespace PasswordManager.Web.Controllers
             return Ok();
         }
         
-        
+        [Authorize]
+        [HttpGet("users")]
+        public async Task<IActionResult> Users()
+        {
+            var users = await db.Users.ToListAsync();
+            var response = new List<UserDto>();
+            foreach (var user in users)
+            {
+                var userResponse = new UserDto
+                {
+                    Id = user.Id,
+                    Login = user.Login
+                };
+                response.Add(userResponse);
+            }
+            
+            return Ok(response);
+        }
     }
 }
