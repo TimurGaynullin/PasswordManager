@@ -16,5 +16,9 @@ namespace PasswordManager.Domain.Abstractions
         Task<PasswordDto> UpdatePassword(PasswordDto passwordDto, User user, string masterPassword);
 
         Task<bool> DeletePassword(int id, User user);
+
+        Task<bool> SharePassword(int passwordId, User userSender, User userReciver, string masterPassword);
+
+        Task<bool> RecieveSharingPasswords(User user, string masterPassword);
     }
 }

@@ -18,10 +18,15 @@ namespace PasswordManager.Web.Controllers
     {
         private StorageContext db;
         private IValidationService validationService;
-        public AccountController(StorageContext context, IValidationService validationService)
+        private IPasswordService _passwordService;
+        private IUserRepository _userRepository;
+        public AccountController(StorageContext context, IValidationService validationService,
+            IPasswordService passwordService, IUserRepository userRepository)
         {
             db = context;
             this.validationService = validationService;
+            _passwordService = passwordService;
+            _userRepository = userRepository;
         }
         
         [Authorize]
@@ -53,7 +58,10 @@ namespace PasswordManager.Web.Controllers
                 if (validationService.LogIn(user, model.Password))
                 {
                     await Authenticate(model.Login);
-                    return Ok();
+                    user = await _userRepository.GetIncludingPasswordsAsync(user.Id);
+                    var success = await _passwordService.RecieveSharingPasswords(user, model.Password);
+                    if (success)
+                        return Ok();
                 }
             }
             return StatusCode(401);

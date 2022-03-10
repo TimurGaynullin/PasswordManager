@@ -149,5 +149,36 @@ namespace PasswordManager.Web.Controllers
 			
         }
         
+        [HttpPost("sharing")]
+        [Description("Sharing")]
+        public async Task<ApiResponse> Share(SharePasswordRequestDto sharePasswordRequestDto)
+        {
+            try
+            {
+                var currentUserName = User.Identity?.Name;
+                var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
+                if (userId == null)
+                    throw new Exception("Пользователь не найден");
+                
+                var reciverUserId = (await db.Users.FirstOrDefaultAsync(x => x.Id == sharePasswordRequestDto.UserId))?.Id;
+                if (reciverUserId == null)
+                    throw new Exception("Пользователь-получатель не найден");
+                
+                var user = await _userRepository.GetIncludingPasswordsAsync(userId.Value);
+                var reciverUser = await _userRepository.GetIncludingPasswordsAsync(reciverUserId.Value);
+                if (!_validationService.LogIn(user, sharePasswordRequestDto.MasterPassword))
+                    throw new Exception("Неправильный мастер-пароль");
+
+                var success = await _passwordService.SharePassword(sharePasswordRequestDto.PasswordId, user,
+                    reciverUser, sharePasswordRequestDto.MasterPassword);
+                
+                return ApiResponse.CreateSuccess();
+            }
+            catch(Exception e)
+            {
+                return ApiResponse.CreateFailure(e.InnerException == null ? e.Message : e.InnerException.Message);
+            }
+        }
+        
     }
 }

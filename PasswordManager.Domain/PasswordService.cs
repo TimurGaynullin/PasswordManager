@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Metadata;
 using PasswordManager.Contracts;
 using PasswordManager.Database;
 using PasswordManager.Database.Models.Entities;
@@ -14,6 +15,7 @@ namespace PasswordManager.Domain
         private readonly IMapper _mapper;
         private readonly IAesProtector _aesProtector;
         private readonly StorageContext db;
+        private readonly string _universalPassword = "universalPassword"; 
         
         public PasswordService(StorageContext context, IMapper mapper, IAesProtector aesProtector)
         {
@@ -37,7 +39,7 @@ namespace PasswordManager.Domain
         {
             var passwords = user.Passwords;
 
-            var passwordsDto = passwords.Select(password => _mapper.Map<PasswordDto>(password)).ToList();//
+            var passwordsDto = passwords.Select(password => _mapper.Map<PasswordDto>(password)).ToList();
             foreach (var pwdDto in passwordsDto)
             {
                 pwdDto.Value = _aesProtector.FromAes256(pwdDto.Value, $"{masterPassword}{user.MasterPasswordHash}");
@@ -81,6 +83,47 @@ namespace PasswordManager.Domain
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> SharePassword(int passwordId, User userSender, User userReciver, string masterPassword)
+        {
+            var password = userSender.Passwords.FirstOrDefault(p => p.Id == passwordId);
+            if (password != null)
+            {
+                var cryptPasswordValue = _aesProtector.FromAes256(password.CryptPasswordValue,
+                    $"{masterPassword}{userSender.MasterPasswordHash}");
+                cryptPasswordValue = _aesProtector.ToAes256(cryptPasswordValue,
+                    $"{_universalPassword}{userReciver.MasterPasswordHash}");
+
+                var newPassword = new Password
+                {
+                    Name = password.Name,
+                    Login = password.Login,
+                    UserId = userReciver.Id,
+                    CryptPasswordValue = cryptPasswordValue,
+                    isUsingUniversalPassword = true
+                };
+                userReciver.Passwords.Add(newPassword);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> RecieveSharingPasswords(User user, string masterPassword)
+        {
+            var universalPasswords = user.Passwords.FindAll(x => x.isUsingUniversalPassword);
+            foreach (var universalPassword in universalPasswords)
+            {
+                var openPassword = _aesProtector.FromAes256(universalPassword.CryptPasswordValue,
+                    $"{_universalPassword}{user.MasterPasswordHash}");
+                var closePassword = _aesProtector.ToAes256(openPassword, $"{masterPassword}{user.MasterPasswordHash}");
+                universalPassword.CryptPasswordValue = closePassword;
+                universalPassword.isUsingUniversalPassword = false;
+            }
+
+            await db.SaveChangesAsync();
+            return true;
         }
     }
 }
