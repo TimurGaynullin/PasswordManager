@@ -101,7 +101,7 @@ namespace PasswordManager.Domain
                     Login = password.Login,
                     UserId = userReciver.Id,
                     CryptPasswordValue = cryptPasswordValue,
-                    isUsingUniversalPassword = true
+                    IsUsingUniversalPassword = true
                 };
                 userReciver.Passwords.Add(newPassword);
                 await db.SaveChangesAsync();
@@ -112,14 +112,14 @@ namespace PasswordManager.Domain
 
         public async Task<bool> RecieveSharingPasswords(User user, string masterPassword)
         {
-            var universalPasswords = user.Passwords.FindAll(x => x.isUsingUniversalPassword);
+            var universalPasswords = user.Passwords.FindAll(x => x.IsUsingUniversalPassword);
             foreach (var universalPassword in universalPasswords)
             {
                 var openPassword = _aesProtector.FromAes256(universalPassword.CryptPasswordValue,
                     $"{_universalPassword}{user.MasterPasswordHash}");
                 var closePassword = _aesProtector.ToAes256(openPassword, $"{masterPassword}{user.MasterPasswordHash}");
                 universalPassword.CryptPasswordValue = closePassword;
-                universalPassword.isUsingUniversalPassword = false;
+                universalPassword.IsUsingUniversalPassword = false;
             }
 
             await db.SaveChangesAsync();

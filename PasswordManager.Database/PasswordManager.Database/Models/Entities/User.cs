@@ -9,6 +9,7 @@ namespace PasswordManager.Database.Models.Entities
         public User()
         {
             Passwords = new List<Password>();
+            SecretDatas = new List<SecretData>();
         }
         [Key]
         public int Id { get; set; }
@@ -21,5 +22,7 @@ namespace PasswordManager.Database.Models.Entities
         public string MasterPasswordHash { get; set; }
         
         public List<Password> Passwords { get; set; }
+        
+        public List<SecretData> SecretDatas { get; set; }
     }
 }

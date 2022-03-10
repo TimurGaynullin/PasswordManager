@@ -7,6 +7,9 @@ namespace PasswordManager.Database
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Password> Passwords { get; set; }
+        public DbSet<DataType> DataTypes { get; set; }
+        public DbSet<TypeField> TypeFields { get; set; }
+        
         /*
         public DbSet<Group> Groups { get; set; }
         public DbSet<Folder> Folders { get; set; }
@@ -24,13 +27,24 @@ namespace PasswordManager.Database
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            /*
-            modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Name = "Tom", Age = 37 },
-                new User { Id = 2, Name = "Bob", Age = 41 },
-                new User { Id = 3, Name = "Sam", Age = 24 }
+            modelBuilder.Entity<DataType>().HasData(
+                new DataType { Id = 1, Name = "Паспорт"}
             );
-            */
+            
+            modelBuilder.Entity<TypeField>().HasData(
+                new TypeField { Id = 1, Name = "Фамилия", IsSecret = false, DataTypeId = 1},
+                new TypeField { Id = 2, Name = "Имя", IsSecret = false, DataTypeId = 1},
+                new TypeField { Id = 3, Name = "Отчество", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 4, Name = "Пол", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 5, Name = "Дата рождения", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 6, Name = "Место рождения", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 7, Name = "Серия", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 8, Name = "Номер", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 9, Name = "Кем выдан", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 10, Name = "Дата выдачи", IsSecret = true, DataTypeId = 1},
+                new TypeField { Id = 11, Name = "Код подразделения", IsSecret = true, DataTypeId = 1}
+            );
+            
         }
     }
 }

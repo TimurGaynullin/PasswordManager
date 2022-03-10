@@ -2,19 +2,17 @@
 
 namespace PasswordManager.Database.Models.Entities
 {
-    public class Password
+    public class Field
     {
         [Key]
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
-        public string Login { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
-        [Required]
-        public string CryptPasswordValue { get; set; }
-        
+        public string Value { get; set; }
+
         public bool IsUsingUniversalPassword { get; set; }
+        
+        public int SecretDataId { get; set; }
+        public SecretData SecretData { get; set; }
     }
 }
