@@ -36,15 +36,22 @@ bld/
 [Oo]bj/
 [Ll]og/
 
-PasswordManager.Contracts/[Bb]in/
+PasswordManager.Contracts/bin/Debug/net6.0/
+PasswordManager.Contracts/obj/Debug/net6.0/
 PasswordManager.Contracts/[Oo]bj/
 
+PasswordManager.Database/bin/Debug/net6.0/
+PasswordManager.Database/obj/Debug/net6.0/
 PasswordManager.Database/[Bb]in/
 PasswordManager.Database/[Oo]bj/
 
+PasswordManager.Domain/bin/Debug/net6.0/
+PasswordManager.Domain/obj/Debug/net6.0/
 PasswordManager.Domain/[Bb]in/
 PasswordManager.Domain/[Oo]bj/
 
+PasswordManager.Web/bin/Debug/net6.0/
+PasswordManager.Web/obj/Debug/net6.0/
 PasswordManager.Web/[Bb]in/
 PasswordManager.Web/[Oo]bj/
 
