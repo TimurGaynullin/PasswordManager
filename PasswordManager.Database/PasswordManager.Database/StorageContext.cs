@@ -24,7 +24,8 @@ namespace PasswordManager.Database
                 new DataType { Id = 3, Name = "Водительское удостоверение"},
                 new DataType { Id = 4, Name = "Банковская карта"},
                 new DataType { Id = 5, Name = "Полис обязательного медицинского страхования"},
-                new DataType { Id = 6, Name = "Свидетельство о постановке на учет физического лица в налоговом органе"}
+                new DataType { Id = 6, Name = "Свидетельство о постановке на учет физического лица в налоговом органе"},
+                new DataType { Id = 7, Name = "Пароль"}
             );
             
             modelBuilder.Entity<TypeField>().HasData(
@@ -78,16 +79,20 @@ namespace PasswordManager.Database
                 new TypeField { Id = 44, Name = "Отчество", IsSecret = true, DataTypeId = 5},
                 new TypeField { Id = 45, Name = "Дата рождения", IsSecret = true, DataTypeId = 5},
                 new TypeField { Id = 46, Name = "Пол", IsSecret = true, DataTypeId = 5},
-                new TypeField { Id = 47, Name = "Номер", IsSecret = false, DataTypeId = 5},
+                new TypeField { Id = 47, Name = "Номер", IsSecret = true, DataTypeId = 5},
                 
                 new TypeField { Id = 48, Name = "Фамилия", IsSecret = false, DataTypeId = 6},
                 new TypeField { Id = 49, Name = "Имя", IsSecret = false, DataTypeId = 6},
                 new TypeField { Id = 50, Name = "Отчество", IsSecret = true, DataTypeId = 6},
                 new TypeField { Id = 51, Name = "Дата рождения", IsSecret = true, DataTypeId = 6},
                 new TypeField { Id = 52, Name = "Пол", IsSecret = true, DataTypeId = 6},
-                new TypeField { Id = 53, Name = "Место рождения", IsSecret = false, DataTypeId = 6},
-                new TypeField { Id = 54, Name = "ИНН", IsSecret = false, DataTypeId = 6},
-                new TypeField { Id = 55, Name = "Дата присвоения ИНН", IsSecret = false, DataTypeId = 6}
+                new TypeField { Id = 53, Name = "Место рождения", IsSecret = true, DataTypeId = 6},
+                new TypeField { Id = 54, Name = "ИНН", IsSecret = true, DataTypeId = 6},
+                new TypeField { Id = 55, Name = "Дата присвоения ИНН", IsSecret = true, DataTypeId = 6},
+                
+                new TypeField { Id = 56, Name = "Название", IsSecret = false, DataTypeId = 7},
+                new TypeField { Id = 57, Name = "Логин", IsSecret = false, DataTypeId = 7},
+                new TypeField { Id = 58, Name = "Пароль", IsSecret = true, DataTypeId = 7}
             );
         }
     }

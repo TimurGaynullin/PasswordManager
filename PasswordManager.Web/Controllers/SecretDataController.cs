@@ -13,14 +13,14 @@ namespace PasswordManager.Web.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PasswordController : ControllerBase
+    public class SecretDataController : ControllerBase
     {
         private StorageContext db;
-        private IPasswordService _passwordService;
+        private IPasswordService _passwordService; //поменять
         private IUserRepository _userRepository;
         private IValidationService _validationService;
         
-        public PasswordController(StorageContext context, IPasswordService passwordService,
+        public SecretDataController(StorageContext context, IPasswordService passwordService,
             IUserRepository userRepository, IValidationService validationService)
         {
             db = context;
@@ -30,16 +30,17 @@ namespace PasswordManager.Web.Controllers
         }
         
         [HttpPost("{id}")]
-        [Description("Получить пароль по id")]
+        [Description("Получить секретные данные по id")]
         public async Task<ApiResponse> Get(int id, [FromBody] string masterPassword)
         {
             var currentUserName = User.Identity?.Name;
             var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
             if (userId == null)
                 throw new Exception("Пользователь не найден");
-            var user = await _userRepository.GetIncludingPasswordsAsync(userId.Value);
+            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
             if (!_validationService.LogIn(user, masterPassword))
                 throw new Exception("Неправильный мастер-пароль");
+            
             var passwordDto = await _passwordService.GetPassword(id, user, masterPassword);
             if (passwordDto != null)
             {

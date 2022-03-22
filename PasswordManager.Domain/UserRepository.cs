@@ -26,5 +26,15 @@ namespace PasswordManager.Domain
                 throw new Exception("Entity with this id does not exist");
             return dbEntity;
         }
+
+        public async Task<User> GetIncludingSecretDataAsync(int id)
+        {
+            var dbEntity = await db.Users
+                .Include(user => user.SecretDatas).ThenInclude(x=>x.Fields)
+                .FirstOrDefaultAsync(user => user.Id == id);
+            if (dbEntity == null)
+                throw new Exception("Entity with this id does not exist");
+            return dbEntity;
+        }
     }
 }
