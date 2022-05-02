@@ -10,8 +10,6 @@ namespace PasswordManager.Database.Models.Entities
         public string Name { get; set; }
         public string Value { get; set; }
 
-        public bool IsUsingUniversalPassword { get; set; }
-        
         public int SecretDataId { get; set; }
         public SecretData SecretData { get; set; }
     }

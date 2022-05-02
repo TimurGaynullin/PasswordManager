@@ -5,15 +5,20 @@ namespace PasswordManager.Contracts
     public class SecretDataDto
     {
         public int Id { get; set; }
-        public int DataTypeId { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public IDictionary<string, string> Fields { get; set; }
     }
 
-    public class FieldDto
+    public class DataTypeDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Value { get; set; }
-        public bool IsUsingUniversalPassword { get; set; }
+        public List<TypeFieldDto> TypeFields { get; set; }
+    }
+
+    public class TypeFieldDto
+    {
+        public string Name { get; set; }
     }
 }

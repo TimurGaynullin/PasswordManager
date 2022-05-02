@@ -38,6 +38,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<IValidationService, ValidationService>();
 builder.Services.AddTransient<IPasswordService, PasswordService>();
+builder.Services.AddTransient<ISecretDataService, SecretDataService>();
+builder.Services.AddTransient<IDataTypeService, DataTypeService>();   
 builder.Services.AddTransient<IAesProtector, AesProtector>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IHasher, Hasher>();

@@ -11,7 +11,7 @@ namespace PasswordManager.Domain.Abstractions
 
         Task<List<SecretDataDto>> GetSecretDatas(User user, string masterPassword);
 
-        Task<SecretDataDto> CreateSecretData(SecretDataDto secretDataDto, User user, string masterPassword);
+        Task<SecretDataDto> CreateSecretData(CreateSecretDataDto secretDataDto, User user, string masterPassword);
 
         Task<SecretDataDto> UpdateSecretData(SecretDataDto secretDataDto, User user, string masterPassword);
 

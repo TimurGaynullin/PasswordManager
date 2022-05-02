@@ -14,7 +14,6 @@ namespace PasswordManager.Database.Models.Entities
         public User User { get; set; }
         [Required]
         public string CryptPasswordValue { get; set; }
-        
         public bool IsUsingUniversalPassword { get; set; }
     }
 }

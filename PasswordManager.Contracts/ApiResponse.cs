@@ -26,9 +26,11 @@
 
         public static ApiResponse<TResult> CreateSuccess<TResult>(TResult result) where TResult : class
         {
-            ApiResponse<TResult> apiResponse = new ApiResponse<TResult>();
-            apiResponse.Result = result;
-            apiResponse.Success = true;
+            var apiResponse = new ApiResponse<TResult>
+            {
+                Result = result,
+                Success = true
+            };
             return apiResponse;
         }
 

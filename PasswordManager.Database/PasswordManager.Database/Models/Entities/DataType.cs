@@ -8,7 +8,6 @@ namespace PasswordManager.Database.Models.Entities
         public DataType()
         {
             TypeFields = new List<TypeField>();
-            //Fields = new List<Field>();
         }
         [Key]
         public int Id { get; set; }
@@ -19,6 +18,5 @@ namespace PasswordManager.Database.Models.Entities
         public string Name { get; set; }
         
         public List<TypeField> TypeFields { get; set; }
-        //public List<Field> Fields { get; set; }
     }
 }

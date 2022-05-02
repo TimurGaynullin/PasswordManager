@@ -16,17 +16,19 @@ namespace PasswordManager.Web.Controllers
     public class SecretDataController : ControllerBase
     {
         private StorageContext db;
-        private IPasswordService _passwordService; //поменять
+        private IPasswordService _passwordService;
+        private ISecretDataService _secretDataService;
         private IUserRepository _userRepository;
         private IValidationService _validationService;
         
         public SecretDataController(StorageContext context, IPasswordService passwordService,
-            IUserRepository userRepository, IValidationService validationService)
+            IUserRepository userRepository, IValidationService validationService, ISecretDataService secretDataService)
         {
             db = context;
             _passwordService = passwordService;
             _userRepository = userRepository;
             _validationService = validationService;
+            _secretDataService = secretDataService;
         }
         
         [HttpPost("{id}")]
@@ -41,33 +43,34 @@ namespace PasswordManager.Web.Controllers
             if (!_validationService.LogIn(user, masterPassword))
                 throw new Exception("Неправильный мастер-пароль");
             
-            var passwordDto = await _passwordService.GetPassword(id, user, masterPassword);
-            if (passwordDto != null)
+            var secretDataDto = await _secretDataService.GetSecretData(id, user, masterPassword);
+            if (secretDataDto != null)
             {
-                return ApiResponse.CreateSuccess(passwordDto);
+                return ApiResponse.CreateSuccess(secretDataDto);
             }
 
-            return ApiResponse.CreateFailure("Пароль не найден");
+            return ApiResponse.CreateFailure("Данные не найдены");
         }
         
         [HttpPost]
-        [Description("Получить все пароли")]
+        [Description("Получить все данные")]
         public async Task<ApiResponse> Get([FromBody] string masterPassword)
         {
             var currentUserName = User.Identity?.Name;
             var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
             if (userId == null)
                 throw new Exception("Пользователь не найден");
-            var user = await _userRepository.GetIncludingPasswordsAsync(userId.Value);
+            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
             if (!_validationService.LogIn(user, masterPassword))
                 throw new Exception("Неправильный мастер-пароль");
-            var passwordsDto = await _passwordService.GetPasswords(user, masterPassword);
-            return ApiResponse.CreateSuccess(passwordsDto);
+
+            var secretDataDto = await _secretDataService.GetSecretDatas(user, masterPassword);
+            return ApiResponse.CreateSuccess(secretDataDto);
         }
         
         [HttpPost("create")]
         [Description("Create")]
-        public async Task<ApiResponse> Create(CreatePasswordDto createPasswordDto)
+        public async Task<ApiResponse> Create(CreateSecretDataDto createSecretDataDto)
         {
             try
             {
@@ -76,19 +79,12 @@ namespace PasswordManager.Web.Controllers
                 if (userId == null)
                     throw new Exception("Пользователь не найден");
 
-                var user = await _userRepository.GetIncludingPasswordsAsync(userId.Value);
-                if (!_validationService.LogIn(user, createPasswordDto.MasterPassword))
+                var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
+                if (!_validationService.LogIn(user, createSecretDataDto.MasterPassword))
                     throw new Exception("Неправильный мастер-пароль");
-
-                var passwordDto = new PasswordDto
-                {
-                    Id = createPasswordDto.Id,
-                    Login = createPasswordDto.Login,
-                    Name = createPasswordDto.Name,
-                    Value = createPasswordDto.Value
-                };
-                passwordDto = await _passwordService.CreatePassword(passwordDto, user, createPasswordDto.MasterPassword);
-                return ApiResponse.CreateSuccess(passwordDto);
+                
+                var secretDataDto = await _secretDataService.CreateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
+                return ApiResponse.CreateSuccess(secretDataDto);
             }
             catch(Exception e)
             {
@@ -98,7 +94,7 @@ namespace PasswordManager.Web.Controllers
         
         [HttpPut]
         [Description("Update")]
-        public async Task<ApiResponse> Update(CreatePasswordDto createPasswordDto)
+        public async Task<ApiResponse> Update(CreatePasswordDto createPasswordDto) //надо делать
         {
             var currentUserName = User.Identity?.Name;
             var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
@@ -126,7 +122,7 @@ namespace PasswordManager.Web.Controllers
         
         [HttpDelete("{id}")]
         [Description("Delete")]
-        public async Task<ApiResponse> Delete(int id)
+        public async Task<ApiResponse> Delete(int id) //надо делать
         {
             var currentUserName = User.Identity?.Name;
             var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
@@ -152,7 +148,7 @@ namespace PasswordManager.Web.Controllers
         
         [HttpPost("sharing")]
         [Description("Sharing")]
-        public async Task<ApiResponse> Share(SharePasswordRequestDto sharePasswordRequestDto)
+        public async Task<ApiResponse> Share(SharePasswordRequestDto sharePasswordRequestDto) //надо делать
         {
             try
             {
