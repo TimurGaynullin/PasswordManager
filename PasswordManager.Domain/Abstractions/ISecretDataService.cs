@@ -13,7 +13,7 @@ namespace PasswordManager.Domain.Abstractions
 
         Task<SecretDataDto> CreateSecretData(CreateSecretDataDto secretDataDto, User user, string masterPassword);
 
-        Task<SecretDataDto> UpdateSecretData(SecretDataDto secretDataDto, User user, string masterPassword);
+        Task<SecretDataDto> UpdateSecretData(CreateSecretDataDto secretDataDto, User user, string masterPassword);
 
         Task<bool> DeleteSecretData(int id, User user);
 

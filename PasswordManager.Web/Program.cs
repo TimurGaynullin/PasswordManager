@@ -40,7 +40,8 @@ builder.Services.AddTransient<IValidationService, ValidationService>();
 builder.Services.AddTransient<IPasswordService, PasswordService>();
 builder.Services.AddTransient<ISecretDataService, SecretDataService>();
 builder.Services.AddTransient<IDataTypeService, DataTypeService>();   
-builder.Services.AddTransient<IAesProtector, AesProtector>();
+//builder.Services.AddTransient<IAesProtector, AesProtector>();
+builder.Services.AddTransient<IAesProtector, NewNewProtector>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IHasher, Hasher>();
 builder.Services.AddSingleton(new MapperConfiguration(mc =>

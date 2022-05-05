@@ -4,6 +4,7 @@ namespace PasswordManager.Contracts
 {
     public class CreateSecretDataDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public int DataTypeId { get; set; }
         public List<FieldDto> Fields { get; set; }

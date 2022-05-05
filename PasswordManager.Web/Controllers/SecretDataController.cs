@@ -94,45 +94,38 @@ namespace PasswordManager.Web.Controllers
         
         [HttpPut]
         [Description("Update")]
-        public async Task<ApiResponse> Update(CreatePasswordDto createPasswordDto) //надо делать
+        public async Task<ApiResponse> Update(CreateSecretDataDto createSecretDataDto)
         {
             var currentUserName = User.Identity?.Name;
             var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
             if (userId == null)
                 throw new Exception("Пользователь не найден");
 
-            var user = await _userRepository.GetIncludingPasswordsAsync(userId.Value);
-            if (!_validationService.LogIn(user, createPasswordDto.MasterPassword))
+            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
+            if (!_validationService.LogIn(user, createSecretDataDto.MasterPassword))
                 throw new Exception("Неправильный мастер-пароль");
-            var passwordDto = new PasswordDto
-            {
-                Id = createPasswordDto.Id,
-                Login = createPasswordDto.Login,
-                Name = createPasswordDto.Name,
-                Value = createPasswordDto.Value
-            };
             
-            passwordDto = await _passwordService.UpdatePassword(passwordDto, user, createPasswordDto.MasterPassword);
-            if (passwordDto != null)
+            var secretDataDto = await _secretDataService.UpdateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
+            if (secretDataDto != null)
             {
-                return ApiResponse.CreateSuccess(passwordDto);
+                return ApiResponse.CreateSuccess(secretDataDto);
             }
             return ApiResponse.CreateFailure();
         }
         
         [HttpDelete("{id}")]
         [Description("Delete")]
-        public async Task<ApiResponse> Delete(int id) //надо делать
+        public async Task<ApiResponse> Delete(int id)
         {
             var currentUserName = User.Identity?.Name;
             var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
             if (userId == null)
                 throw new Exception("Пользователь не найден");
 
-            var user = await _userRepository.GetIncludingPasswordsAsync(userId.Value);
+            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
             try
             {
-                var isDeleted = await _passwordService.DeletePassword(id, user);
+                var isDeleted = await _secretDataService.DeleteSecretData(id, user);
                 if (isDeleted)
                 {
                     return ApiResponse.CreateSuccess("Удалено");

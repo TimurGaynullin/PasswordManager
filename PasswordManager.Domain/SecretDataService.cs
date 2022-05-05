@@ -94,14 +94,47 @@ namespace PasswordManager.Domain
             return new SecretDataDto();
         }
 
-        public async Task<SecretDataDto> UpdateSecretData(SecretDataDto secretDataDto, User user, string masterPassword)
+        public async Task<SecretDataDto> UpdateSecretData(CreateSecretDataDto secretDataDto, User user, string masterPassword)
         {
-            throw new System.NotImplementedException();
+            var secretData = new SecretData
+            {
+                Id = secretDataDto.Id,
+                DataTypeId = secretDataDto.DataTypeId,
+                Fields = new List<Field>(),
+                IsUsingUniversalPassword = false,
+                Name = secretDataDto.Name,
+                UserId = user.Id
+            };
+            foreach (var field in secretDataDto.Fields)
+            {
+                secretData.Fields.Add(new Field
+                {
+                    Name = field.Name,
+                    Value = _aesProtector.ToAes256(field.Value, $"{masterPassword}{user.MasterPasswordHash}")
+                });
+            }
+            
+            var updatedPassword = user.SecretDatas.FirstOrDefault(p => p.Id == secretData.Id);
+
+            if (updatedPassword != null)
+            {
+                db.SecretDatas.Update(secretData);
+                await db.SaveChangesAsync();
+                return new SecretDataDto();
+            }
+            return null;
         }
 
         public async Task<bool> DeleteSecretData(int id, User user)
         {
-            throw new System.NotImplementedException();
+            var secretData = user.SecretDatas.FirstOrDefault(p => p.Id == id);
+            if (secretData != null)
+            {
+                db.SecretDatas.Remove(secretData);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> ShareSecretData(int secretDataId, User userSender, User userReciver, string masterPassword)

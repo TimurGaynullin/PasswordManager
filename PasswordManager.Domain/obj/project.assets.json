@@ -23,6 +23,15 @@
           "lib/netstandard2.1/AutoMapper.dll": {}
         }
       },
+      "EasyEncryption/1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/EasyEncryption.dll": {}
+        },
+        "runtime": {
+          "lib/EasyEncryption.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.7.0": {
         "type": "package",
         "compile": {
@@ -273,6 +282,20 @@
         "icon.png",
         "lib/netstandard2.1/AutoMapper.dll",
         "lib/netstandard2.1/AutoMapper.xml"
+      ]
+    },
+    "EasyEncryption/1.0.2": {
+      "sha512": "Rs/YqbsOAscUbx8zVfhqp22P73oFJyQNcrVr/6dhs2xwQ3H+JgBCo7GIyybJ4b3s5vNzrC1bO7YtnocnC4Gqqg==",
+      "type": "package",
+      "path": "easyencryption/1.0.2",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "easyencryption.1.0.2.nupkg.sha512",
+        "easyencryption.nuspec",
+        "lib/EasyEncryption.dll",
+        "tools/init.ps1"
       ]
     },
     "Microsoft.CSharp/4.7.0": {
@@ -680,6 +703,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "AutoMapper >= 11.0.1",
+      "EasyEncryption >= 1.0.2",
       "PasswordManager.Contracts >= 1.0.0",
       "PasswordManager.Database >= 1.0.0",
       "aesencryptionutil >= 1.0.0"
@@ -737,6 +761,10 @@
             "target": "Package",
             "version": "[11.0.1, )"
           },
+          "EasyEncryption": {
+            "target": "Package",
+            "version": "[1.0.2, )"
+          },
           "aesencryptionutil": {
             "target": "Package",
             "version": "[1.0.0, )"
@@ -766,8 +794,18 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"aesencryptionutil 1.0.0\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \"net6.0\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'aesencryptionutil 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "aesencryptionutil",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'EasyEncryption 1.0.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
+      "libraryId": "EasyEncryption",
       "targetGraphs": [
         "net6.0"
       ]

@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "u/QeWCD4GL1I1MLc7fpDX9u05ApOQOrjpQLNL0YaZYR6HHVxLAXv+4+1qOENxtBK9QWuhWWC6DUtWPm7niJnrQ==",
+  "dgSpecHash": "4/935sGq77Hf8YdZ7ZTKqKZJP16JAJM7qi869lzuPD9qQ/gt11xbj6msTaZgY/DLY77WMWL8r77sMym//F/vVA==",
   "success": true,
   "projectFilePath": "C:\\Users\\GaynullinTA\\source\\PasswordManager\\PasswordManager.Domain\\PasswordManager.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\aesencryptionutil\\1.0.0\\aesencryptionutil.1.0.0.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
+    "C:\\Users\\GaynullinTA\\.nuget\\packages\\easyencryption\\1.0.2\\easyencryption.1.0.2.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.1\\microsoft.entityframeworkcore.6.0.1.nupkg.sha512",
     "C:\\Users\\GaynullinTA\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.1\\microsoft.entityframeworkcore.abstractions.6.0.1.nupkg.sha512",
@@ -27,8 +28,18 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"aesencryptionutil 1.0.0\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \"net6.0\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'aesencryptionutil 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "aesencryptionutil",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'EasyEncryption 1.0.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
+      "libraryId": "EasyEncryption",
       "targetGraphs": [
         "net6.0"
       ]
