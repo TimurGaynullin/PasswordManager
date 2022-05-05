@@ -17,8 +17,7 @@ namespace PasswordManager.Domain
                 //SHA256 mySha256 = new SHA256CryptoServiceProvider();
                 byte[] aeskeyInBytes = Encoding.UTF8.GetBytes(aeskey);
                 byte[] key = mySha256.ComputeHash(aeskeyInBytes);
-
-
+                
                 //mySha256.Dispose();
                 // Check arguments.
                 if (password == null || password.Length <= 0)

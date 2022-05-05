@@ -141,7 +141,7 @@ namespace PasswordManager.Web.Controllers
         
         [HttpPost("sharing")]
         [Description("Sharing")]
-        public async Task<ApiResponse> Share(SharePasswordRequestDto sharePasswordRequestDto) //надо делать
+        public async Task<ApiResponse> Share(ShareSecretDataRequestDto shareSecretDataRequestDto)
         {
             try
             {
@@ -150,17 +150,17 @@ namespace PasswordManager.Web.Controllers
                 if (userId == null)
                     throw new Exception("Пользователь не найден");
                 
-                var reciverUserId = (await db.Users.FirstOrDefaultAsync(x => x.Id == sharePasswordRequestDto.UserId))?.Id;
+                var reciverUserId = (await db.Users.FirstOrDefaultAsync(x => x.Id == shareSecretDataRequestDto.UserId))?.Id;
                 if (reciverUserId == null)
                     throw new Exception("Пользователь-получатель не найден");
                 
-                var user = await _userRepository.GetIncludingPasswordsAsync(userId.Value);
-                var reciverUser = await _userRepository.GetIncludingPasswordsAsync(reciverUserId.Value);
-                if (!_validationService.LogIn(user, sharePasswordRequestDto.MasterPassword))
+                var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
+                var reciverUser = await _userRepository.GetIncludingSecretDataAsync(reciverUserId.Value);
+                if (!_validationService.LogIn(user, shareSecretDataRequestDto.MasterPassword))
                     throw new Exception("Неправильный мастер-пароль");
 
-                var success = await _passwordService.SharePassword(sharePasswordRequestDto.PasswordId, user,
-                    reciverUser, sharePasswordRequestDto.MasterPassword);
+                var success = await _secretDataService.ShareSecretData(shareSecretDataRequestDto.SecretDataId, user,
+                    reciverUser, shareSecretDataRequestDto.MasterPassword);
                 
                 return ApiResponse.CreateSuccess();
             }

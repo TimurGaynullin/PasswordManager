@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using AutoMapper;
 using PasswordManager.Contracts;
@@ -96,29 +95,25 @@ namespace PasswordManager.Domain
 
         public async Task<SecretDataDto> UpdateSecretData(CreateSecretDataDto secretDataDto, User user, string masterPassword)
         {
-            var secretData = new SecretData
-            {
-                Id = secretDataDto.Id,
-                DataTypeId = secretDataDto.DataTypeId,
-                Fields = new List<Field>(),
-                IsUsingUniversalPassword = false,
-                Name = secretDataDto.Name,
-                UserId = user.Id
-            };
-            foreach (var field in secretDataDto.Fields)
-            {
-                secretData.Fields.Add(new Field
-                {
-                    Name = field.Name,
-                    Value = _aesProtector.ToAes256(field.Value, $"{masterPassword}{user.MasterPasswordHash}")
-                });
-            }
+            var updatedData = user.SecretDatas.FirstOrDefault(p => p.Id == secretDataDto.Id);
             
-            var updatedPassword = user.SecretDatas.FirstOrDefault(p => p.Id == secretData.Id);
-
-            if (updatedPassword != null)
+            if (updatedData != null)
             {
-                db.SecretDatas.Update(secretData);
+                updatedData.DataTypeId = secretDataDto.DataTypeId;
+                updatedData.Fields = new List<Field>();
+                updatedData.IsUsingUniversalPassword = false;
+                updatedData.Name = secretDataDto.Name;
+                updatedData.UserId = user.Id;
+                foreach (var field in secretDataDto.Fields)
+                {
+                    updatedData.Fields.Add(new Field
+                    {
+                        Name = field.Name,
+                        Value = _aesProtector.ToAes256(field.Value, $"{masterPassword}{user.MasterPasswordHash}")
+                    });
+                }
+
+                db.SecretDatas.Update(updatedData);
                 await db.SaveChangesAsync();
                 return new SecretDataDto();
             }
@@ -139,12 +134,58 @@ namespace PasswordManager.Domain
 
         public async Task<bool> ShareSecretData(int secretDataId, User userSender, User userReciver, string masterPassword)
         {
-            throw new System.NotImplementedException();
+            var secretData = userSender.SecretDatas.FirstOrDefault(p => p.Id == secretDataId);
+            if (secretData != null)
+            {
+                var fields = new List<Field>();
+                foreach (var field in secretData.Fields)
+                {
+                    var cryptDataValue = _aesProtector.FromAes256(field.Value,
+                        $"{masterPassword}{userSender.MasterPasswordHash}");
+                    cryptDataValue = _aesProtector.ToAes256(cryptDataValue,
+                        $"{_universalPassword}{userReciver.MasterPasswordHash}");
+                    
+                    fields.Add(new Field
+                    {
+                        
+                        Name = field.Name,
+                        Value = cryptDataValue
+                    });
+                }
+
+                var newSecretData = new SecretData
+                {
+                    Name = secretData.Name,
+                    DataTypeId = secretData.DataTypeId,
+                    Fields = fields,
+                    UserId = userReciver.Id,
+                    IsUsingUniversalPassword = true
+                };
+                userReciver.SecretDatas.Add(newSecretData);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> RecieveSharingSecretDatas(User user, string masterPassword)
         {
-            throw new System.NotImplementedException();
+            var universalDatas = user.SecretDatas.FindAll(x => x.IsUsingUniversalPassword);
+            foreach (var universalData in universalDatas)
+            {
+                foreach (var field in universalData.Fields)
+                {
+                    var openData = _aesProtector.FromAes256(field.Value,
+                        $"{_universalPassword}{user.MasterPasswordHash}");
+                    var closeData = _aesProtector.ToAes256(openData,
+                        $"{masterPassword}{user.MasterPasswordHash}");
+                    field.Value = closeData;
+                }
+                universalData.IsUsingUniversalPassword = false;
+            }
+
+            await db.SaveChangesAsync();
+            return true;
         }
     }
 }

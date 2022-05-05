@@ -21,19 +21,21 @@ namespace PasswordManager.Web.Controllers
         private StorageContext db;
         private IValidationService validationService;
         private IPasswordService _passwordService;
+        private ISecretDataService _secretDataService;
         private IUserRepository _userRepository;
         public AccountController(StorageContext context, IValidationService validationService,
-            IPasswordService passwordService, IUserRepository userRepository)
+            IPasswordService passwordService, IUserRepository userRepository, ISecretDataService secretDataService)
         {
             db = context;
             this.validationService = validationService;
             _passwordService = passwordService;
             _userRepository = userRepository;
+            _secretDataService = secretDataService;
         }
         
         [Authorize]
         [HttpPost("password/change")]
-        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model) //TODO
         {
             if (ModelState.IsValid)
             {
@@ -60,8 +62,8 @@ namespace PasswordManager.Web.Controllers
                 if (validationService.LogIn(user, model.Password))
                 {
                     await Authenticate(model.Login);
-                    user = await _userRepository.GetIncludingPasswordsAsync(user.Id);
-                    var success = await _passwordService.RecieveSharingPasswords(user, model.Password);
+                    user = await _userRepository.GetIncludingSecretDataAsync(user.Id);
+                    var success = await _secretDataService.RecieveSharingSecretDatas(user, model.Password);
                     if (success)
                         return Ok();
                 }
