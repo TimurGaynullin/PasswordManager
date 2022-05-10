@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using PasswordManager.Contracts;
-using PasswordManager.Domain.Abstractions;
+
 
 namespace PasswordManager.Web.Controllers
 {
@@ -11,19 +13,62 @@ namespace PasswordManager.Web.Controllers
     [Route("api/[controller]")]
     public class DataTypeController : ControllerBase
     {
-        private IDataTypeService _dataTypeService;
-        
-        public DataTypeController(IDataTypeService dataTypeService)
+
+        public DataTypeController()
         {
-            _dataTypeService = dataTypeService;
         }
         
         [HttpGet]
         [Description("Получить все типы данных")]
         public async Task<ApiResponse> Get()
         {
-            var dataTypes = await _dataTypeService.DataTypes();
-            return ApiResponse.CreateSuccess(dataTypes);
+            var response = new List<DataTypeDto>();
+            response.Add(new DataTypeDto
+            {
+                Id = 1, 
+                Name = "Паспорт",
+                TypeFields = new List<TypeFieldDto>
+                    {
+                        new()
+                        {
+                            Name = "Фамилия"
+                        },
+                        new()
+                        {
+                            Name = "Имя"
+                        },
+                        new()
+                        {
+                            Name = "Отчество"
+                        },
+                        new()
+                        {
+                            Name = "Серия"
+                        },
+                        new()
+                        {
+                            Name = "Номер"
+                        },
+                    }
+                });
+                response.Add(new DataTypeDto
+                {
+                    Id = 2, 
+                    Name = "Пароль",
+                    TypeFields = new List<TypeFieldDto>
+                    {
+                        new()
+                        {
+                            Name = "Логин"
+                        },
+                        new()
+                        {
+                            Name = "Пароль"
+                        }
+                    }
+                });
+                return ApiResponse.CreateSuccess(response);
+            
         }
     }
 }

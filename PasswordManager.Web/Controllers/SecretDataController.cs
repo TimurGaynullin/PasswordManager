@@ -1,173 +1,110 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using PasswordManager.Contracts;
 using PasswordManager.Database;
-using PasswordManager.Domain.Abstractions;
 
 namespace PasswordManager.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class SecretDataController : ControllerBase
     {
-        private StorageContext db;
-        private IPasswordService _passwordService;
-        private ISecretDataService _secretDataService;
-        private IUserRepository _userRepository;
-        private IValidationService _validationService;
         
-        public SecretDataController(StorageContext context, IPasswordService passwordService,
-            IUserRepository userRepository, IValidationService validationService, ISecretDataService secretDataService)
+        
+        public SecretDataController()
         {
-            db = context;
-            _passwordService = passwordService;
-            _userRepository = userRepository;
-            _validationService = validationService;
-            _secretDataService = secretDataService;
         }
         
         [HttpPost("{id}")]
         [Description("Получить секретные данные по id")]
         public async Task<ApiResponse> Get(int id, [FromBody] string masterPassword)
         {
-            var currentUserName = User.Identity?.Name;
-            var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
-            if (userId == null)
-                throw new Exception("Пользователь не найден");
-            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
-            if (!_validationService.LogIn(user, masterPassword))
-                throw new Exception("Неправильный мастер-пароль");
+            var fields = new Dictionary<string, string>();
+                fields.Add("Фамилия", "Бобин");
+                fields.Add("Имя", "Боб");
+                fields.Add("Отчество", "Бобович");
+                fields.Add("Серия", "9200");
+                fields.Add("Номер", "123456");
+                
+                return ApiResponse.CreateSuccess(new SecretDataDto
+                {
+                    Id = 1,
+                    Name = "Паспорт Боба",
+                    Type = "Паспорт",
+                    Fields = fields
+                });
             
-            var secretDataDto = await _secretDataService.GetSecretData(id, user, masterPassword);
-            if (secretDataDto != null)
-            {
-                return ApiResponse.CreateSuccess(secretDataDto);
-            }
-
-            return ApiResponse.CreateFailure("Данные не найдены");
         }
         
         [HttpPost]
         [Description("Получить все данные")]
         public async Task<ApiResponse> Get([FromBody] string masterPassword)
         {
-            var currentUserName = User.Identity?.Name;
-            var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
-            if (userId == null)
-                throw new Exception("Пользователь не найден");
-            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
-            if (!_validationService.LogIn(user, masterPassword))
-                throw new Exception("Неправильный мастер-пароль");
-
-            var secretDataDto = await _secretDataService.GetSecretDatas(user, masterPassword);
-            return ApiResponse.CreateSuccess(secretDataDto);
+            
+                var fields1 = new Dictionary<string, string>();
+                fields1.Add("Фамилия", "Бобин");
+                fields1.Add("Имя", "Боб");
+                fields1.Add("Отчество", "Бобович");
+                fields1.Add("Серия", "9200");
+                fields1.Add("Номер", "123456");
+                var fields2 = new Dictionary<string, string>();
+                fields2.Add("Логин", "bob");
+                fields2.Add("Пароль", "katarakta");
+                
+                return ApiResponse.CreateSuccess(new List<SecretDataDto>
+                {
+                    new SecretDataDto 
+                    { 
+                        Id = 1,
+                        Name = "Паспорт Боба",
+                        Type = "Паспорт",
+                        Fields = fields1
+                    },
+                    new SecretDataDto
+                    {
+                        Id = 2,
+                        Name = "Пароль от vk.com",
+                        Type = "Пароль",
+                        Fields = fields2
+                    }
+                });
+            
         }
         
         [HttpPost("create")]
         [Description("Create")]
         public async Task<ApiResponse> Create(CreateSecretDataDto createSecretDataDto)
         {
-            try
-            {
-                var currentUserName = User.Identity?.Name;
-                var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
-                if (userId == null)
-                    throw new Exception("Пользователь не найден");
-
-                var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
-                if (!_validationService.LogIn(user, createSecretDataDto.MasterPassword))
-                    throw new Exception("Неправильный мастер-пароль");
-                
-                var secretDataDto = await _secretDataService.CreateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
-                return ApiResponse.CreateSuccess(secretDataDto);
-            }
-            catch(Exception e)
-            {
-                return ApiResponse.CreateFailure(e.InnerException == null ? e.Message : e.InnerException.Message);
-            }
+            
+                return ApiResponse.CreateSuccess(new SecretDataDto());
         }
         
         [HttpPut]
         [Description("Update")]
         public async Task<ApiResponse> Update(CreateSecretDataDto createSecretDataDto)
         {
-            var currentUserName = User.Identity?.Name;
-            var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
-            if (userId == null)
-                throw new Exception("Пользователь не найден");
-
-            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
-            if (!_validationService.LogIn(user, createSecretDataDto.MasterPassword))
-                throw new Exception("Неправильный мастер-пароль");
-            
-            var secretDataDto = await _secretDataService.UpdateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
-            if (secretDataDto != null)
-            {
-                return ApiResponse.CreateSuccess(secretDataDto);
-            }
-            return ApiResponse.CreateFailure();
+            return ApiResponse.CreateSuccess(new SecretDataDto());
         }
         
         [HttpDelete("{id}")]
         [Description("Delete")]
         public async Task<ApiResponse> Delete(int id)
         {
-            var currentUserName = User.Identity?.Name;
-            var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
-            if (userId == null)
-                throw new Exception("Пользователь не найден");
-
-            var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
-            try
-            {
-                var isDeleted = await _secretDataService.DeleteSecretData(id, user);
-                if (isDeleted)
-                {
-                    return ApiResponse.CreateSuccess("Удалено");
-                }
-                return ApiResponse.CreateFailure();
-            }
-            catch(Exception e)
-            {
-                return ApiResponse.CreateFailure(e.Message);
-            }
-			
+            return ApiResponse.CreateSuccess("Удалено");
         }
         
         [HttpPost("sharing")]
         [Description("Sharing")]
         public async Task<ApiResponse> Share(ShareSecretDataRequestDto shareSecretDataRequestDto)
         {
-            try
-            {
-                var currentUserName = User.Identity?.Name;
-                var userId = (await db.Users.FirstOrDefaultAsync(x => x.Login == currentUserName))?.Id;
-                if (userId == null)
-                    throw new Exception("Пользователь не найден");
-                
-                var reciverUserId = (await db.Users.FirstOrDefaultAsync(x => x.Id == shareSecretDataRequestDto.UserId))?.Id;
-                if (reciverUserId == null)
-                    throw new Exception("Пользователь-получатель не найден");
-                
-                var user = await _userRepository.GetIncludingSecretDataAsync(userId.Value);
-                var reciverUser = await _userRepository.GetIncludingSecretDataAsync(reciverUserId.Value);
-                if (!_validationService.LogIn(user, shareSecretDataRequestDto.MasterPassword))
-                    throw new Exception("Неправильный мастер-пароль");
-
-                var success = await _secretDataService.ShareSecretData(shareSecretDataRequestDto.SecretDataId, user,
-                    reciverUser, shareSecretDataRequestDto.MasterPassword);
-                
-                return ApiResponse.CreateSuccess();
-            }
-            catch(Exception e)
-            {
-                return ApiResponse.CreateFailure(e.InnerException == null ? e.Message : e.InnerException.Message);
-            }
+            return ApiResponse.CreateSuccess();
         }
     }
 }

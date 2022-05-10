@@ -11,14 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using PasswordManager.Database;
-using PasswordManager.Domain;
-using PasswordManager.Domain.Abstractions;
 using PasswordManager.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
-// Add services to the container.
 
 builder.Services.AddCors(options =>
 {
@@ -36,18 +33,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddAuthorization();
 
-builder.Services.AddTransient<IValidationService, ValidationService>();
-builder.Services.AddTransient<IPasswordService, PasswordService>();
-builder.Services.AddTransient<ISecretDataService, SecretDataService>();
-builder.Services.AddTransient<IDataTypeService, DataTypeService>();   
-//builder.Services.AddTransient<IAesProtector, AesProtector>();
-builder.Services.AddTransient<IAesProtector, NewNewProtector>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IHasher, Hasher>();
 builder.Services.AddSingleton(new MapperConfiguration(mc =>
 {
-    mc.AddProfile(new ControllersMappingProfile());
-    mc.AddProfile(new MappingProfile());
+    
 }).CreateMapper());
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen(c =>
@@ -59,7 +47,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddStorageDbContext(options => options.UseSqlServer(configuration["App:DbConnectionString"]));
+//builder.Services.AddStorageDbContext(options => options.UseSqlServer(configuration["App:DbConnectionString"]));
 
 var app = builder.Build();
 app.UseAuthentication();

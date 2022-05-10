@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using PasswordManager.Contracts;
 using PasswordManager.Database;
-using PasswordManager.Domain.Abstractions;
+
 using PasswordManager.Web.Controllers.ViewModels;
 
 namespace PasswordManager.Web.Controllers
@@ -18,21 +19,10 @@ namespace PasswordManager.Web.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private StorageContext db;
-        private IValidationService validationService;
-        private IPasswordService _passwordService;
-        private ISecretDataService _secretDataService;
-        private IUserRepository _userRepository;
-        public AccountController(StorageContext context, IValidationService validationService,
-            IPasswordService passwordService, IUserRepository userRepository, ISecretDataService secretDataService)
+        public AccountController()
         {
-            db = context;
-            this.validationService = validationService;
-            _passwordService = passwordService;
-            _userRepository = userRepository;
-            _secretDataService = secretDataService;
         }
-        
+        /*
         [Authorize]
         [HttpPost("password/change")]
         public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model) //TODO
@@ -51,78 +41,43 @@ namespace PasswordManager.Web.Controllers
                 }
             }
             return NotFound();
-        }
+        }*/
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
-                if (validationService.LogIn(user, model.Password))
-                {
-                    await Authenticate(model.Login);
-                    user = await _userRepository.GetIncludingSecretDataAsync(user.Id);
-                    var success = await _secretDataService.RecieveSharingSecretDatas(user, model.Password);
-                    if (success)
-                        return Ok();
-                }
-            }
-            return StatusCode(401);
+            return Ok();
         }
 
         [HttpPost("registration")]
         public async Task<IActionResult> Register([FromBody]RegisterModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
-                if (validationService.Registering(user, model.Login, model.Password))
-                {
-                    await Authenticate(model.Login);
-                    return Ok();
-                }
-            }
-            return NotFound();
-        }
-
-        private async Task Authenticate(string userName)
-        {
-            // создаем один claim
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
-            };
-            // создаем объект ClaimsIdentity
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            // установка аутентификационных куки
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+            return Ok();
         }
 
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
         }
         
-        [Authorize]
+        //[Authorize]
         [HttpGet("users")]
         public async Task<IActionResult> Users()
         {
-            var users = await db.Users.ToListAsync();
-            var response = new List<UserDto>();
-            foreach (var user in users)
+            var testResponse = new List<UserDto>();
+            testResponse.Add(new UserDto
             {
-                var userResponse = new UserDto
-                {
-                    Id = user.Id,
-                    Login = user.Login
-                };
-                response.Add(userResponse);
-            }
-            
-            return Ok(response);
+                Id = 1,
+                Login = "Alice"
+                
+            });
+            testResponse.Add(new UserDto
+            {
+                Id = 2,
+                Login = "Bob"
+            });
+            return Ok(testResponse);
         }
     }
 }
