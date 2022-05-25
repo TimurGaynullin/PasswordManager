@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PasswordManager.Database.Models.Entities
 {
@@ -18,6 +16,9 @@ namespace PasswordManager.Database.Models.Entities
         /// </summary>
         [Required]
         public string Login { get; set; }
+        /// <summary>
+        /// Хэш от мастер-пароля
+        /// </summary>
         [Required]
         public string MasterPasswordHash { get; set; }
         

@@ -1,7 +1,4 @@
-//TODO: Сделать CRUD операции с паролями, создать модуль шифрования
-//Шифруем данные хэшем от мастер-пароля и его хэша
-//Расшифровка будет на стороне клиента
-//Когда пользователь хочет поделиться паролем, бэк принимает его в открытом виде, у себя шифрует AESом. Когда логинится пользователь-получатель, перешифруем пароль
+//"DbConnectionString": "Server=localhost\\SQLEXPRESS02;Database=PasswordManager;Trusted_Connection=True;",
 
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,15 +16,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 // Add services to the container.
-
+var  myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+/*
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        builder =>
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy  =>
         {
-            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyOrigin().AllowCredentials();
+            policy.WithOrigins("http://localhost:8080/");
         });
-});
+});*/
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -37,10 +35,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<IValidationService, ValidationService>();
-builder.Services.AddTransient<IPasswordService, PasswordService>();
 builder.Services.AddTransient<ISecretDataService, SecretDataService>();
 builder.Services.AddTransient<IDataTypeService, DataTypeService>();
-builder.Services.AddTransient<IAesProtector, NewNewProtector>();
+builder.Services.AddTransient<IAesProtector, AesProtector>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IHasher, Hasher>();
 builder.Services.AddSingleton(new MapperConfiguration(mc =>
@@ -63,6 +60,11 @@ builder.Services.AddStorageDbContext(options => options.UseSqlServer(configurati
 var app = builder.Build();
 app.UseAuthentication();
 app.UseRouting();
+app.UseCors(x=> x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin=>true)
+    .AllowCredentials());
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {

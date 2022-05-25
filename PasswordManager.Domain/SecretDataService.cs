@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using PasswordManager.Contracts;
+﻿using PasswordManager.Contracts;
 using PasswordManager.Database;
 using PasswordManager.Database.Models.Entities;
 using PasswordManager.Domain.Abstractions;
@@ -11,15 +7,13 @@ namespace PasswordManager.Domain
 {
     public class SecretDataService : ISecretDataService
     {
-        private readonly IMapper _mapper;
         private readonly IAesProtector _aesProtector;
         private readonly StorageContext db;
         private readonly string _universalPassword = "universalPassword"; 
         
-        public SecretDataService(StorageContext context, IMapper mapper, IAesProtector aesProtector)
+        public SecretDataService(StorageContext context, IAesProtector aesProtector)
         {
             db = context;
-            _mapper = mapper;
             _aesProtector = aesProtector;
         }
         
@@ -147,7 +141,6 @@ namespace PasswordManager.Domain
                     
                     fields.Add(new Field
                     {
-                        
                         Name = field.Name,
                         Value = cryptDataValue
                     });

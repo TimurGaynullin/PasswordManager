@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,16 +14,14 @@ namespace PasswordManager.Web.Controllers
     public class SecretDataController : ControllerBase
     {
         private StorageContext db;
-        private IPasswordService _passwordService;
         private ISecretDataService _secretDataService;
         private IUserRepository _userRepository;
         private IValidationService _validationService;
         
-        public SecretDataController(StorageContext context, IPasswordService passwordService,
-            IUserRepository userRepository, IValidationService validationService, ISecretDataService secretDataService)
+        public SecretDataController(StorageContext context, IUserRepository userRepository, 
+            IValidationService validationService, ISecretDataService secretDataService)
         {
             db = context;
-            _passwordService = passwordService;
             _userRepository = userRepository;
             _validationService = validationService;
             _secretDataService = secretDataService;
@@ -83,7 +79,8 @@ namespace PasswordManager.Web.Controllers
                 if (!_validationService.LogIn(user, createSecretDataDto.MasterPassword))
                     throw new Exception("Неправильный мастер-пароль");
                 
-                var secretDataDto = await _secretDataService.CreateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
+                var secretDataDto = await _secretDataService
+                    .CreateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
                 return ApiResponse.CreateSuccess(secretDataDto);
             }
             catch(Exception e)
@@ -105,7 +102,8 @@ namespace PasswordManager.Web.Controllers
             if (!_validationService.LogIn(user, createSecretDataDto.MasterPassword))
                 throw new Exception("Неправильный мастер-пароль");
             
-            var secretDataDto = await _secretDataService.UpdateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
+            var secretDataDto = await _secretDataService
+                .UpdateSecretData(createSecretDataDto, user, createSecretDataDto.MasterPassword);
             if (secretDataDto != null)
             {
                 return ApiResponse.CreateSuccess(secretDataDto);
@@ -136,7 +134,6 @@ namespace PasswordManager.Web.Controllers
             {
                 return ApiResponse.CreateFailure(e.Message);
             }
-			
         }
         
         [HttpPost("sharing")]
@@ -150,7 +147,8 @@ namespace PasswordManager.Web.Controllers
                 if (userId == null)
                     throw new Exception("Пользователь не найден");
                 
-                var reciverUserId = (await db.Users.FirstOrDefaultAsync(x => x.Id == shareSecretDataRequestDto.UserId))?.Id;
+                var reciverUserId = (await db.Users.FirstOrDefaultAsync(x => 
+                    x.Id == shareSecretDataRequestDto.UserId))?.Id;
                 if (reciverUserId == null)
                     throw new Exception("Пользователь-получатель не найден");
                 
@@ -159,7 +157,7 @@ namespace PasswordManager.Web.Controllers
                 if (!_validationService.LogIn(user, shareSecretDataRequestDto.MasterPassword))
                     throw new Exception("Неправильный мастер-пароль");
 
-                var success = await _secretDataService.ShareSecretData(shareSecretDataRequestDto.SecretDataId, user,
+                await _secretDataService.ShareSecretData(shareSecretDataRequestDto.SecretDataId, user,
                     reciverUser, shareSecretDataRequestDto.MasterPassword);
                 
                 return ApiResponse.CreateSuccess();

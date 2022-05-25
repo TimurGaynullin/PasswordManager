@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -20,37 +17,15 @@ namespace PasswordManager.Web.Controllers
     {
         private StorageContext db;
         private IValidationService validationService;
-        private IPasswordService _passwordService;
         private ISecretDataService _secretDataService;
         private IUserRepository _userRepository;
         public AccountController(StorageContext context, IValidationService validationService,
-            IPasswordService passwordService, IUserRepository userRepository, ISecretDataService secretDataService)
+            IUserRepository userRepository, ISecretDataService secretDataService)
         {
             db = context;
             this.validationService = validationService;
-            _passwordService = passwordService;
             _userRepository = userRepository;
             _secretDataService = secretDataService;
-        }
-        
-        [Authorize]
-        [HttpPost("password/change")]
-        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model) //TODO
-        {
-            if (ModelState.IsValid)
-            {
-                var currentUserName = User.Identity?.Name;
-                if (currentUserName == null) return BadRequest();
-                var user = await db.Users
-                    .Include(x => x.Passwords)//Когда появятся другие секретные данные, подтянуть все и перешифровать
-                    .FirstOrDefaultAsync(u => u.Login == currentUserName);
-                if (validationService.ChangingPassword(user, model.OldPassword, model.NewPassword))
-                {
-                    await Authenticate(currentUserName);
-                    return Ok();
-                }
-            }
-            return NotFound();
         }
 
         [HttpPost("login")]
