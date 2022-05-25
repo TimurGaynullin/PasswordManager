@@ -17,15 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(
-        builder =>
-        {
-            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyOrigin().AllowCredentials();
-        });
-});
-
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -52,6 +43,11 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 app.UseAuthentication();
 app.UseRouting();
+app.UseCors(x=> x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin=>true)
+    .AllowCredentials());
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
