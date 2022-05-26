@@ -544,3 +544,8 @@ appsettings.Development.json
 Properties/launchSettings.json
 
 
+*.dll
+*.pdb
+PasswordManager.Database/PasswordManager.Database/obj
+PasswordManager.Domain/obj
+PasswordManager.Domain/bin
